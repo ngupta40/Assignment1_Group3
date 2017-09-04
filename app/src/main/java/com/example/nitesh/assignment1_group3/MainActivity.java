@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -17,49 +18,54 @@ public class MainActivity extends AppCompatActivity {
     public static GraphView graphView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("On cretae started....\n");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Creating objects of all the UI elements which are required
         final Button btnRunObj = (Button)findViewById(R.id.btnRun);
-        final TextView tex=(TextView)findViewById(R.id.editText);
         final Button btnStopObj = (Button)findViewById(R.id.btnStop);
-        //btnRunObj.setOnClickListener(this);
-        //btnStopObj.setOnClickListener(this);
-        //btnStopObj.setEnabled(false);
+
+        final TextView patName =(TextView)findViewById(R.id.txtPatName);
+        final TextView patId = (TextView) findViewById(R.id.txtPatID);
+        final TextView patAge = (TextView) findViewById(R.id.txtAge);
 
         final ViewGroup graphLayout = (ViewGroup)findViewById(R.id.GraphLyout);
+
         final float arr[] = new float[10];
 
-        final String VAxis[] = {"30","20","10","0"};
-        final String XAxis[] = {"0","10","20","30"};
+        final String VAxis[] = {"1.00","0.75","0.5","0.25","0"};
+        final String XAxis[] = {"0","0.25","0.5","0.75","1.00"};
         MainActivity.graphView = new GraphView(MainActivity.this,arr,"Patient Health Monitor",XAxis,VAxis,true);
         graphView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         graphView.setBackgroundColor(Color.BLACK);
 
+        btnStopObj.setEnabled(false);
         graphLayout.addView(graphView);
 
         btnRunObj.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                System.out.println("\n\n\nInside on click...\n\n\n");
-                Intent intent = getIntent();
-                //finish();
-                startActivity(intent);
-                setContentView(R.layout.activity_main);
-                final ViewGroup graphLayout = (ViewGroup)findViewById(R.id.GraphLyout);
-                Random rd = new Random();
-                for(int i=0;i<10;i++) {
-                    arr[i] = rd.nextFloat();
+                System.out.println(patName.getText());
+                if(patName.getText().length() == 0  || patId.getText().length() == 0 || patAge.getText().length() == 0)
+                {
+                    Toast.makeText(getApplicationContext(), "Enter All Details", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                MainActivity.graphView = new GraphView(MainActivity.this,arr,"Patient Health Monitor",XAxis,VAxis,true);
-                graphView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-                graphView.setBackgroundColor(Color.BLACK);
-                graphLayout.addView(graphView);
-                btnStopObj.setOnClickListener(this);
-                //btnStopObj.getKeyListener();
-                //btnStopObj.setEnabled(true);
-                //btnRunObj.setEnabled(false);
+                else
+                {
+                    Random rd = new Random();
+                    for (int i = 0; i < 10; i++) {
+                        arr[i] = rd.nextFloat();
+                    }
+                    MainActivity.graphView = new GraphView(MainActivity.this, arr, "Patient Health Monitor", XAxis, VAxis, true);
+                    graphView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    graphView.setBackgroundColor(Color.BLACK);
+                    graphLayout.addView(graphView);
+                    btnRunObj.setEnabled(false);
+                    btnStopObj.setEnabled(true);
+                }
             }
         });
 
@@ -67,16 +73,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                System.out.println("Inside Stop Click");
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-                setContentView(R.layout.activity_main);
-                MainActivity.graphView = new GraphView(MainActivity.this,arr,"Patient Health Monitor",XAxis,VAxis,true);
-                MainActivity.graphView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-                MainActivity.graphView.setBackgroundColor(Color.BLACK);
-                graphLayout.addView(graphView);
-                btnRunObj.setOnClickListener(this);
+                graphLayout.removeView(graphView);
+                btnRunObj.setEnabled(true);
+                btnStopObj.setEnabled(false);
             }
         });
     }
