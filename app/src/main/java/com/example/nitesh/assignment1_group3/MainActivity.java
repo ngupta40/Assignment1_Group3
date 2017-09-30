@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
+
 
 public class MainActivity extends AppCompatActivity {
     public static GraphView graphView;
@@ -21,10 +25,18 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        String path = Environment.getExternalStorageDirectory().getPath();
+        String dataBase=path+"/assignment1_group3"; //+"/Android/Data/CSE535_ASSIGNMENT2/"+
+        final MyDataBase db=new MyDataBase(MainActivity.this,dataBase);
+        db.createDataBase();
         //Creating objects of all the UI elements which are required
         final Button btnRunObj = (Button)findViewById(R.id.btnRun);
         final Button btnStopObj = (Button)findViewById(R.id.btnStop);
+
+        final Button btnUploadObj=(Button)findViewById(R.id.Upload);
+
+        final RadioButton rdbMaleObj = (RadioButton)findViewById(R.id.radioButton7);
+        final RadioButton rdbFemaleObj = (RadioButton)findViewById(R.id.radioButton8);
 
         final TextView patName =(TextView)findViewById(R.id.txtPatName);
         final TextView patId = (TextView) findViewById(R.id.txtPatID);
@@ -48,6 +60,38 @@ public class MainActivity extends AppCompatActivity {
         graphLayout.addView(graphView);
         //Disabling the stop button initially to avoid crashes
         btnStopObj.setEnabled(false);
+
+
+
+        btnUploadObj.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+
+                if(patName.getText().length() == 0  || patId.getText().length() == 0 || patAge.getText().length() == 0)
+                {
+                    // Generate a toast with text Enter All Details if any detail is left out and then return i.e. do not plot graph
+
+                    Toast.makeText(getApplicationContext(), "Enter All Details", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                else
+                {
+                    String sex = "";
+                    if(rdbMaleObj.isEnabled()) {
+                        sex = "Male";
+                    }
+                    else
+                        sex = "Female";
+
+                    String TABLE_NAME=patName.getText()+"_"+patId.getText()+"_"+patAge.getText()+"_"+ sex;
+                    db.createTable(TABLE_NAME);
+
+
+                }
+            }
+        });
+
 
         //Creating an OnListener event for run button to handle the Run Button click event
         btnRunObj.setOnClickListener(new Button.OnClickListener() {

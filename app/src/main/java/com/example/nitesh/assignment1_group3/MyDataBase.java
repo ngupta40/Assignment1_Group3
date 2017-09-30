@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
-
 import java.util.ArrayList;
 
 /**
@@ -24,9 +23,6 @@ public class MyDataBase extends SQLiteOpenHelper {
     private static final String YVal= "YValue";    // Column III
     private static final String ZVal= "ZValue";
     private SQLiteDatabase db = null;
-    //private static final String CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+
-    //      " ("+UID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+NAME+" VARCHAR(255) ,"+ MyPASSWORD+" VARCHAR(225));";
-    //private static final String DROP_TABLE ="DROP TABLE IF EXISTS "+TABLE_NAME;
     private Context context;
 
     public MyDataBase(Context context,String dataBase) {
@@ -64,12 +60,9 @@ public class MyDataBase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             System.out.println("OnUpgrade");
-            //Message.message(context,"OnUpgrade");
-            //db.execSQL(DROP_TABLE);
             onCreate(db);
         }catch (Exception e) {
             System.out.println(e);
-            //Message.message(context,""+e);
         }
     }
 
@@ -98,7 +91,8 @@ public class MyDataBase extends SQLiteOpenHelper {
         cursor.moveToFirst();
         int i =9;
         while(i>0){
-            if(!cursor.isAfterLast()) {
+            if(!cursor.isAfterLast())
+            {
                 float xvalue = cursor.getFloat(cursor.getColumnIndex("XValue"));
                 XValue[i] = (float) xvalue;
                 float yvalue = cursor.getFloat(cursor.getColumnIndex("YValue"));
@@ -115,17 +109,6 @@ public class MyDataBase extends SQLiteOpenHelper {
             }
             i--;
         }
-
-
-        /*StringBuffer buffer= new StringBuffer();
-        while (cursor.moveToNext())
-        {
-            int cid =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
-            String name =cursor.getString(cursor.getColumnIndex(myDbHelper.NAME));
-            String  password =cursor.getString(cursor.getColumnIndex(myDbHelper.MyPASSWORD));
-            buffer.append(cid+ "   " + name + "   " + password +" \n");
-        }
-        return buffer.toString();*/
 
         cursor.close();
         ArrayList<float[]> accList = new ArrayList<float[]>();
