@@ -86,7 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
                     String TABLE_NAME=patName.getText()+"_"+patId.getText()+"_"+patAge.getText()+"_"+ sex;
                     db.createTable(TABLE_NAME);
-
+                    Intent startSenseService = new Intent(MainActivity.this, AccelService.class);
+                    Bundle b = new Bundle();
+                    b.putString("tableName", TABLE_NAME);
+                    startSenseService.putExtras(b);
+                    startService(startSenseService);
+                    System.out.println("\n\nReached end of upload function service without error....\n\n");
 
                 }
             }
