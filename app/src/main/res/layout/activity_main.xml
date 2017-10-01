@@ -159,7 +159,7 @@
         android:layout_marginEnd="8dp">
 
         <RadioButton
-            android:id="@+id/radioButton7"
+            android:id="@+id/rdbM"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Male"
@@ -205,16 +205,28 @@
         tools:layout_editor_absoluteY="27dp" />
 
     <RadioButton
-        android:id="@+id/radioButton8"
+        android:id="@+id/rdbF"
         android:layout_width="85dp"
         android:layout_height="24dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:checked="true"
         android:text="Female"
         android:textSize="8sp"
-        tools:layout_editor_absoluteY="70dp"
-        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="70dp" />
+
+    <Button
+        android:id="@+id/Download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginRight="8dp"
+        android:text="Download"
+        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="134dp" />
 
 </android.support.constraint.ConstraintLayout>
