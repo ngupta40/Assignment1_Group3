@@ -60,24 +60,27 @@ public class MainActivity extends AppCompatActivity {
     float[] values = new float[50];
     SQLiteDatabase db;
     String path = Environment.getExternalStorageDirectory().getPath();
-    private final String DATABASE_FILENAME = "/assignment1_group3";
+    private final String DATABASE_FILENAME = "/assignment2_group3";
     private final String DATABASE = path + DATABASE_FILENAME;
     Button runButton;
     Button stopButton;
     Button uploadButton;
     Button downloadButton;
+
+    String Sname;
+    String Sage;
+    String Sid;
+    String Ssex;
+
     EditText id;
     EditText name;
     EditText age;
     RadioButton rb_Male;
     RadioButton rb_Female;
     MyDataBase handler;
-    String String_name;
-    String String_age;
-    String String_id;
-    String String_sex;
+
     String tablename;
-    Boolean serviceBound = false;
+    Boolean serviceFlag = false;
     AccelService accelerometerService;
     Intent serviceIntent;
     ServiceConnection serve;
@@ -87,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 
         String[] verlabels = {"1","2","3","4","5","6"};
         String[] horlabels=  {"1","2","3","4","5","6"};
-        String title = "Graph";
+        String title = "Patient health monitor";
 
         float[] values = new float[10];
         runButton = (Button) findViewById(R.id.btnRun);
@@ -118,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 //msg.arg1
-                float xvalue = msg.getData().getFloat("xvalue");
-                float yvalue = msg.getData().getFloat("yvalue");
-                float zvalue = msg.getData().getFloat("zvalue");
+                float x = msg.getData().getFloat("x");
+                float y = msg.getData().getFloat("y");
+                float z = msg.getData().getFloat("z");
                 Date date = new java.util.Date();
-                if(serviceBound){
-                    handler.insertAccelValues(tablename, new Timestamp(date.getTime()), abs(xvalue),abs(yvalue), abs(zvalue));
+                if(serviceFlag){
+                    handler.insertAccelValues(tablename, new Timestamp(date.getTime()), abs(x),abs(y), abs(z));
                 }
             }
         };
@@ -139,18 +142,18 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     if (buttonAlreadyClicked == false) {
                         buttonAlreadyClicked = true;
-                        serviceBound = true;
+                        serviceFlag = true;
                         handler = new MyDataBase(MainActivity.this);
                         handler.createDatabase();
                         if (rb_Male.isChecked()) {
-                            String_sex = "MALE";
+                            Ssex = "MALE";
                         } else {
-                            String_sex = "FEMALE";
+                            Ssex = "FEMALE";
                         }
-                        String_name = name.getText().toString().toUpperCase().replace(' ', '_');
-                        String_id = id.getText().toString().toUpperCase();
-                        String_age = age.getText().toString().toUpperCase();
-                        tablename = String_name + "_" + String_id + "_"  + String_age + "_" + String_sex;
+                        Sname = name.getText().toString().toUpperCase().replace(' ', '_');
+                        Sid = id.getText().toString().toUpperCase();
+                        Sage = age.getText().toString().toUpperCase();
+                        tablename = Sname + "_" + Sid + "_"  + Sage + "_" + Ssex;
                         handler.createTable(tablename);
 
 
@@ -178,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearGraph();
-                if(serviceBound) {
+                if(serviceFlag) {
                     unbindService(serve);
-                    serviceBound = false;
+                    serviceFlag = false;
                 }
                 Toast.makeText(MainActivity.this, "Service Stop Request Executed", Toast.LENGTH_SHORT).show();
                 System.out.println(ctx.getDatabasePath(DATABASE));
