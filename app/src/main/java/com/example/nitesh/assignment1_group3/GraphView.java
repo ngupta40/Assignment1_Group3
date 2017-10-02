@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 
 /**
  * Created by Nitesh Gupta on 01-10-2017.
@@ -15,65 +16,65 @@ public class GraphView extends View {
 	public static boolean LINE = true;
 
 	private Paint paint;
-	private float[] valuesX;
-	private float[] valuesY;
-	private float[] valuesZ;
-	private String[] horlabels;
-	private String[] verlabels;
+	private float[] Xvalues;
+	private float[] Yvalues;
+	private float[] Zvalues;
+	private String[] HAxis;
+	private String[] VAxis;
 	private String title;
 	private boolean type;
 
-	public GraphView(Context context, float[] valuesX, float[] valuesY, float[] valuesZ, String title, String[] horlabels, String[] verlabels, boolean type) {
+	public GraphView(Context context, float[] Xvalues, float[] Yvalues, float[] Zvalues, String title, String[] HAxis, String[] VAxis, boolean type) {
 		super(context);
-		if (valuesX == null)
-			valuesX = new float[0];
+		if (Xvalues == null)
+			Xvalues = new float[0];
 		else
-			this.valuesX = valuesX;
+			this.Xvalues = Xvalues;
 
-		if (valuesY == null)
-			valuesY = new float[0];
+		if (Yvalues == null)
+			Yvalues = new float[0];
 		else
-			this.valuesY = valuesY;
+			this.Yvalues = Yvalues;
 
-		if (valuesZ == null)
-			valuesZ = new float[0];
+		if (Zvalues == null)
+			Zvalues = new float[0];
 		else
-			this.valuesZ = valuesZ;
+			this.Zvalues = Zvalues;
 
 		if (title == null)
 			title = "";
 		else
 			this.title = title;
 
-		if (horlabels == null)
-			this.horlabels = new String[0];
+		if ( HAxis== null)
+			this.HAxis = new String[0];
 		else
-			this.horlabels = horlabels;
+			this.HAxis = HAxis;
 
-		if (verlabels == null)
-			this.verlabels = new String[0];
+		if (VAxis == null)
+			this.VAxis = new String[0];
 		else
-			this.verlabels = verlabels;
+			this.VAxis = VAxis;
 
 		this.type = type;
 		paint = new Paint();
 	}
 
-	public void setValues(float[] newValuesX, float[] newValuesY, float[] newValuesZ) {
+	public void setValues(float[] XnewValues, float[] YnewValues, float[] ZnewValues) {
 //       this.values = newValues;
 //      System.arraycopy(newValuesX, 0, this.valuesX, 9, 1);
 //      System.arraycopy(newValuesY, 0, this.valuesY, 9, 1);
 //      System.arraycopy(newValuesZ, 0, this.valuesZ, 9, 1);
-		this.valuesX = newValuesX;
-		this.valuesY = newValuesY;
-		this.valuesZ = newValuesZ;
-		System.out.println(this.valuesX);
+		this.Xvalues = XnewValues;
+		this.Yvalues = YnewValues;
+		this.Zvalues = ZnewValues;
+		System.out.println(this.Xvalues);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		float border = 20;
-		float horstart = border * 2;
+		float hstart = border * 2;
 		float height = getHeight();
 		float width = getWidth() - 1;
 //        float max = getMax();
@@ -84,181 +85,181 @@ public class GraphView extends View {
 
 
 		paint.setTextAlign(Paint.Align.LEFT);
-		int vers = verlabels.length - 1;
-		for (int i = 0; i < verlabels.length; i++) {
+		int vers = VAxis.length - 1;
+		for (int i = 0; i < VAxis.length; i++) {
 			paint.setColor(Color.DKGRAY);
 			float y = ((graphheight / vers) * i) + border;
-			canvas.drawLine(horstart, y, width, y, paint);
-			paint.setColor(Color.WHITE);
+			canvas.drawLine(hstart, y, width, y, paint);
+			paint.setColor(Color.BLACK);
 			paint.setTextSize(25.0f);
-			canvas.drawText(verlabels[i], 0, y, paint);
+			canvas.drawText(VAxis[i], 0, y, paint);
 		}
-		int hors = horlabels.length - 1;
-		for (int i = 0; i < horlabels.length; i++) {
+		int hors = HAxis.length - 1;
+		for (int i = 0; i < HAxis.length; i++) {
 			paint.setColor(Color.DKGRAY);
-			float x = ((graphwidth / hors) * i) + horstart;
+			float x = ((graphwidth / hors) * i) + hstart;
 			canvas.drawLine(x, height - border, x, border, paint);
 			paint.setTextAlign(Paint.Align.CENTER);
-			if (i == horlabels.length - 1)
+			if (i == HAxis.length - 1)
 				paint.setTextAlign(Paint.Align.RIGHT);
 			if (i == 0)
 				paint.setTextAlign(Paint.Align.LEFT);
 			paint.setColor(Color.WHITE);
-			canvas.drawText(horlabels[i], x, height - 4, paint);
+			canvas.drawText(HAxis[i], x, height - 4, paint);
 		}
 
 		paint.setTextAlign(Paint.Align.CENTER);
-		canvas.drawText(title, (graphwidth / 2) + horstart, border - 4, paint);
+		canvas.drawText(title, (graphwidth / 2) + hstart, border - 4, paint);
 
-		if (getMaxX() != getMinX()) {
+		if (XMax() != XMin()) {
 			//Plot X Values
-			float maxX = getMaxX();
-			float minX = getMinX();
+			float maxX = XMax();
+			float minX = XMin();
 			float diffX = maxX - minX;
 			paint.setColor(Color.LTGRAY);
 			if (type == BAR) {
-				float datalength = valuesX.length;
+				float datalength = Xvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
-				for (int i = 0; i < valuesX.length; i++) {
-					float val = valuesX[i] - minX;
+				for (int i = 0; i < Xvalues.length; i++) {
+					float val = Xvalues[i] - minX;
 					float rat = val / diffX;
 					float h = graphheight * rat;
-					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
+					canvas.drawRect((i * colwidth) + hstart, (border - h) + graphheight, ((i * colwidth) + hstart) + (colwidth - 1), height - (border - 1), paint);
 				}
 			} else {
-				float datalength = valuesX.length;
+				float datalength = Xvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
 				float halfcol = colwidth / 2;
 				float lasth = 0;
-				for (int i = 0; i < valuesX.length; i++) {
-					float val = valuesX[i] - minX;
+				for (int i = 0; i < Xvalues.length; i++) {
+					float val = Xvalues[i] - minX;
 					float rat = val / diffX;
 					float h = graphheight * rat;
 					if (i > 0)
 						paint.setColor(Color.GREEN);
 					paint.setStrokeWidth(2.0f);
 
-					canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
+					canvas.drawLine(((i - 1) * colwidth) + (hstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (hstart + 1) + halfcol, (border - h) + graphheight, paint);
 					lasth = h;
 				}
 			}
 		}
 
-		if (getMaxY() != getMinY()) {
+		if (YMax() != YMin()) {
 			//Plot Y Values
-			float maxY = getMaxY();
-			float minY = getMinY();
+			float maxY = YMax();
+			float minY = YMin();
 			float diffY = maxY - minY;
 			paint.setColor(Color.LTGRAY);
 			if (type == BAR) {
-				float datalength = valuesY.length;
+				float datalength = Yvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
-				for (int i = 0; i < valuesY.length; i++) {
-					float val = valuesY[i] - minY;
+				for (int i = 0; i < Yvalues.length; i++) {
+					float val = Yvalues[i] - minY;
 					float rat = val / diffY;
 					float h = graphheight * rat;
-					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
+					canvas.drawRect((i * colwidth) + hstart, (border - h) + graphheight, ((i * colwidth) + hstart) + (colwidth - 1), height - (border - 1), paint);
 				}
 			} else {
-				float datalength = valuesY.length;
+				float datalength = Yvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
 				float halfcol = colwidth / 2;
 				float lasth = 0;
-				for (int i = 0; i < valuesY.length; i++) {
-					float val = valuesY[i] - minY;
+				for (int i = 0; i < Yvalues.length; i++) {
+					float val = Yvalues[i] - minY;
 					float rat = val / diffY;
 					float h = graphheight * rat;
 					if (i > 0)
 						paint.setColor(Color.RED);
 					paint.setStrokeWidth(2.0f);
 
-					canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
+					canvas.drawLine(((i - 1) * colwidth) + (hstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (hstart + 1) + halfcol, (border - h) + graphheight, paint);
 					lasth = h;
 				}
 			}
 		}
 
-		if (getMaxZ() != getMinZ()) {
+		if (ZMax() != ZMin()) {
 			//Plot Z Values
-			float maxZ = getMaxZ();
-			float minZ = getMinZ();
-			float diffZ = maxZ - minZ;
+			float Zmax = ZMax();
+			float Zmin = ZMin();
+			float Zdiff = Zmax - Zmin;
 			paint.setColor(Color.LTGRAY);
 			if (type == BAR) {
-				float datalength = valuesZ.length;
+				float datalength = Zvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
-				for (int i = 0; i < valuesZ.length; i++) {
-					float val = valuesZ[i] - minZ;
-					float rat = val / diffZ;
+				for (int i = 0; i < Zvalues.length; i++) {
+					float val = Zvalues[i] - Zmin;
+					float rat = val / Zdiff;
 					float h = graphheight * rat;
-					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
+					canvas.drawRect((i * colwidth) + hstart, (border - h) + graphheight, ((i * colwidth) + hstart) + (colwidth - 1), height - (border - 1), paint);
 				}
 			} else {
-				float datalength = valuesZ.length;
+				float datalength = Zvalues.length;
 				float colwidth = (width - (2 * border)) / datalength;
 				float halfcol = colwidth / 2;
 				float lasth = 0;
-				for (int i = 0; i < valuesZ.length; i++) {
-					float val = valuesZ[i] - minZ;
-					float rat = val / diffZ;
+				for (int i = 0; i < Zvalues.length; i++) {
+					float val = Zvalues[i] - Zmin;
+					float rat = val / Zdiff;
 					float h = graphheight * rat;
 					if (i > 0)
 						paint.setColor(Color.WHITE);
 					paint.setStrokeWidth(2.0f);
 
-					canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
+					canvas.drawLine(((i - 1) * colwidth) + (hstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (hstart + 1) + halfcol, (border - h) + graphheight, paint);
 					lasth = h;
 				}
 			}
 		}
 	}
 
-	private float getMaxX() {
-		float largest = Integer.MIN_VALUE;
-		for (int i = 0; i < valuesX.length; i++)
-			if (valuesX[i] > largest)
-				largest = valuesX[i];
-		return largest;
+	private float XMax() {
+		float high = Integer.MIN_VALUE;
+		for (int i = 0; i < Xvalues.length; i++)
+			if (Xvalues[i] > high)
+				high = Xvalues[i];
+		return high;
 	}
 
-	private float getMinX() {
-		float smallest = Integer.MAX_VALUE;
-		for (int i = 0; i < valuesX.length; i++)
-			if (valuesX[i] < smallest)
-				smallest = valuesX[i];
-		return smallest;
+	private float XMin() {
+		float low = Integer.MAX_VALUE;
+		for (int i = 0; i < Xvalues.length; i++)
+			if (Xvalues[i] < low)
+				low = Xvalues[i];
+		return low;
 	}
 
-	private float getMaxY() {
-		float largest = Integer.MIN_VALUE;
-		for (int i = 0; i < valuesY.length; i++)
-			if (valuesY[i] > largest)
-				largest = valuesY[i];
-		return largest;
+	private float YMax() {
+		float high = Integer.MIN_VALUE;
+		for (int i = 0; i < Yvalues.length; i++)
+			if (Yvalues[i] > high)
+				high = Yvalues[i];
+		return high;
 	}
 
-	private float getMinY() {
-		float smallest = Integer.MAX_VALUE;
-		for (int i = 0; i < valuesY.length; i++)
-			if (valuesY[i] < smallest)
-				smallest = valuesY[i];
-		return smallest;
+	private float YMin() {
+		float low = Integer.MAX_VALUE;
+		for (int i = 0; i < Yvalues.length; i++)
+			if (Yvalues[i] < low)
+				low = Yvalues[i];
+		return low;
 	}
 
-	private float getMaxZ() {
-		float largest = Integer.MIN_VALUE;
-		for (int i = 0; i < valuesZ.length; i++)
-			if (valuesZ[i] > largest)
-				largest = valuesZ[i];
-		return largest;
+	private float ZMax() {
+		float high = Integer.MIN_VALUE;
+		for (int i = 0; i < Zvalues.length; i++)
+			if (Zvalues[i] > high)
+				high = Zvalues[i];
+		return high;
 	}
 
-	private float getMinZ() {
-		float smallest = Integer.MAX_VALUE;
-		for (int i = 0; i < valuesZ.length; i++)
-			if (valuesZ[i] < smallest)
-				smallest = valuesZ[i];
-		return smallest;
+	private float ZMin() {
+		float low = Integer.MAX_VALUE;
+		for (int i = 0; i < Zvalues.length; i++)
+			if (Zvalues[i] < low)
+				low = Zvalues[i];
+		return low;
 	}
 
 }

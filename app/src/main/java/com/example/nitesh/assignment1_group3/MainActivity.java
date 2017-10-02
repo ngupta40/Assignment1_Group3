@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +45,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 
+
 import static java.lang.Math.abs;
+import android.graphics.Color;
 
 
 /**
@@ -93,9 +96,11 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 
-        String[] verlabels = {"1","2","3","4","5","6"};
-        String[] horlabels=  {"1","2","3","4","5","6"};
-        String title = "Patient health monitor";
+
+        String[] VAxis = {"1.00","0.75","0.5","0.25","0"};
+        String[] HAxis=  {"0","0.25","0.5","0.75","1.00"};
+        String title = "Patient Health Monitor";
+
 
         float[] values = new float[10];
         runButton = (Button) findViewById(R.id.btnRun);
@@ -108,12 +113,12 @@ public class MainActivity extends AppCompatActivity {
         rb_Male = (RadioButton) findViewById(R.id.rdbM);
         rb_Female = (RadioButton) findViewById(R.id.rdbF);
 
-        graphView = new GraphView(MainActivity.this,values,values,values,title,horlabels,verlabels,true);
+        graphView = new GraphView(MainActivity.this,values,values,values,title,HAxis,VAxis,true);
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.GraphLyout);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        graphView.setBackgroundColor(Color.BLACK);
         layoutParams.addRule(relativeLayout.BELOW, R.id.parent);
         relativeLayout.addView(graphView, layoutParams);
-
 
         final Handler handler1;
 
@@ -185,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     unbindService(serve);
                     serviceFlag = false;
                 }
-                Toast.makeText(MainActivity.this, "Service Stop Request Executed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Service Stopped", Toast.LENGTH_SHORT).show();
                 System.out.println(ctx.getDatabasePath(DATABASE));
             }
         });
