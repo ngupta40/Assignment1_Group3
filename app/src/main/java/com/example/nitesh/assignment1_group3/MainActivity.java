@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -37,14 +39,15 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 
+
 import static java.lang.Math.abs;
+import android.graphics.Color;
 
 
 /**
@@ -60,24 +63,28 @@ public class MainActivity extends AppCompatActivity {
     float[] values = new float[50];
     SQLiteDatabase db;
     String path = Environment.getExternalStorageDirectory().getPath();
-    private final String DATABASE_FILENAME = "/assignment1_group3";
-    private final String DATABASE = path + DATABASE_FILENAME;
+    private final String DATABASE_FILENAME = "assignment2_group3";
+    private final String DATABASE = path + "/Android/Data/CSE535_ASSIGNMENT2/" + DATABASE_FILENAME;
+    private final String DOWNLOAD_DATABASE = path + "/Android/Data/CSE535_ASSIGNMENT2_Extra/" + DATABASE_FILENAME;
     Button runButton;
     Button stopButton;
     Button uploadButton;
     Button downloadButton;
+
+    String Sname;
+    String Sage;
+    String Sid;
+    String Ssex;
+
     EditText id;
     EditText name;
     EditText age;
     RadioButton rb_Male;
     RadioButton rb_Female;
     MyDataBase handler;
-    String String_name;
-    String String_age;
-    String String_id;
-    String String_sex;
+
     String tablename;
-    Boolean serviceBound = false;
+    Boolean serviceFlag = false;
     AccelService accelerometerService;
     Intent serviceIntent;
     ServiceConnection serve;
@@ -90,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 
+
         String[] VAxis = {"1.00","0.75","0.5","0.25","0"};
         String[] HAxis=  {"0","0.25","0.5","0.75","1.00"};
         String title = "Patient Health Monitor";
+
 
         float[] values = new float[10];
         runButton = (Button) findViewById(R.id.btnRun);
@@ -108,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         graphView = new GraphView(MainActivity.this,values,values,values,title,HAxis,VAxis,true);
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.GraphLyout);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        graphView.setBackgroundColor(Color.BLACK);
         layoutParams.addRule(relativeLayout.BELOW, R.id.parent);
         relativeLayout.addView(graphView, layoutParams);
 
@@ -117,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 //msg.arg1
-                float xvalue = msg.getData().getFloat("xvalue");
-                float yvalue = msg.getData().getFloat("yvalue");
-                float zvalue = msg.getData().getFloat("zvalue");
+                float x = msg.getData().getFloat("x");
+                float y = msg.getData().getFloat("y");
+                float z = msg.getData().getFloat("z");
                 Date date = new java.util.Date();
-                if(serviceBound){
-                    handler.insertAccelValues(tablename, new Timestamp(date.getTime()), abs(xvalue),abs(yvalue), abs(zvalue));
+                if(serviceFlag){
+                    handler.insertAccelValues(tablename, new Timestamp(date.getTime()), abs(x),abs(y), abs(z));
                 }
             }
         };
@@ -138,18 +148,18 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     if (buttonAlreadyClicked == false) {
                         buttonAlreadyClicked = true;
-                        serviceBound = true;
+                        serviceFlag = true;
                         handler = new MyDataBase(MainActivity.this);
                         handler.createDatabase();
                         if (rb_Male.isChecked()) {
-                            String_sex = "MALE";
+                            Ssex = "MALE";
                         } else {
-                            String_sex = "FEMALE";
+                            Ssex = "FEMALE";
                         }
-                        String_name = name.getText().toString().toUpperCase().replace(' ', '_');
-                        String_id = id.getText().toString().toUpperCase();
-                        String_age = age.getText().toString().toUpperCase();
-                        tablename = String_name + "_" + String_id + "_"  + String_age + "_" + String_sex;
+                        Sname = name.getText().toString().toUpperCase().replace(' ', '_');
+                        Sid = id.getText().toString().toUpperCase();
+                        Sage = age.getText().toString().toUpperCase();
+                        tablename = Sname + "_" + Sid + "_"  + Sage + "_" + Ssex;
                         handler.createTable(tablename);
 
 
@@ -177,11 +187,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearGraph();
-                if(serviceBound) {
+                if(serviceFlag) {
                     unbindService(serve);
-                    serviceBound = false;
+                    serviceFlag = false;
                 }
-                Toast.makeText(MainActivity.this, "Service Stop Request Executed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Service Stopped", Toast.LENGTH_SHORT).show();
                 System.out.println(ctx.getDatabasePath(DATABASE));
             }
         });
@@ -253,27 +263,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processUploadClick(){
-
         final MainActivity.UploadTask uploadTask = new MainActivity.UploadTask(MainActivity.this);
-        uploadTask.execute("https://impact.asu.edu/CSE535Spring17Folder/UploadToServer.php");
+        uploadTask.execute("http://10.218.110.136/CSE535Fall17Folder/UploadToServer.php");
         uploadButtonPress = true;
-
     }
 
     private void processDownloadClick() {
         final MainActivity.DownloadTask DownloadTask = new MainActivity.DownloadTask(MainActivity.this);
-        DownloadTask.execute("https://impact.asu.edu/CSE535Spring17Folder/" + DATABASE_FILENAME);
+        DownloadTask.execute("http://10.218.110.136/CSE535Fall17Folder/" + DATABASE_FILENAME);
         downloadButtonPress = true;
     }
-
-
 
 
     private class DownloadTask extends AsyncTask<String, Integer, String> {
 
         private Context context;
         private PowerManager.WakeLock mWakeLock;
-
         public DownloadTask(Context context) {
             this.context = context;
         }
@@ -281,10 +286,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... sUrl) {
             String responseString = null;
-
             InputStream input = null;
             OutputStream output = null;
-            HttpsURLConnection connection = null;
+            HttpURLConnection connection = null;
+            //HttpsURLConnection connection = null;
 
             TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
@@ -305,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 SSLContext sc = SSLContext.getInstance("TLS");
 
                 sc.init(null, trustAllCerts, new java.security.SecureRandom());
-
+                //Changed
                 HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             } catch (KeyManagementException e) {
                 e.printStackTrace();
@@ -315,12 +320,14 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(sUrl[0]);
-                connection = (HttpsURLConnection) url.openConnection();
+                //CHanged
+                connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
                 // expect HTTP 200 OK, so we don't mistakenly save error report
                 // instead of the file
-                if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
+                //Changed
+                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     return "Server returned HTTP " + connection.getResponseCode()
                             + " " + connection.getResponseMessage();
                 }
@@ -332,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                 //downloadButton.setText(Integer.toString(fileLength));
                 // download the file
                 input = connection.getInputStream();
-                output = new FileOutputStream(DATABASE);
+                output = new FileOutputStream(DOWNLOAD_DATABASE);
 
                 byte data[] = new byte[4096];
                 long total = 0;
@@ -386,8 +393,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             mWakeLock.release();
             if (result != null) {
-                Toast.makeText(context, "Error in Uploading: " + result, Toast.LENGTH_LONG).show();
-
+                Toast.makeText(context, "Error in Downloading: " + result, Toast.LENGTH_LONG).show();
 
             } else {
                 Toast.makeText(context, "Downloaded Complete", Toast.LENGTH_SHORT).show();
@@ -421,8 +427,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
     // Upload Async Task.
 
     private class UploadTask extends AsyncTask<String, Integer, String> {
@@ -438,7 +442,8 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... sUrl) {
             FileInputStream input = null;
             DataOutputStream output = null;
-            HttpsURLConnection connection = null;
+            //Changed
+            HttpURLConnection connection = null;
             String responseString = null;
 
             String URLBoundary = "***";
@@ -469,7 +474,8 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(sUrl[0]);
-                connection = (HttpsURLConnection) url.openConnection();
+                //Chanaged
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setUseCaches(false);
