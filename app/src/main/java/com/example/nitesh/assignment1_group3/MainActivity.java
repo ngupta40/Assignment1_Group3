@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     Button stopButton;
     Button uploadButton;
     Button downloadButton;
-
     String Sname;
     String Sage;
     String Sid;
