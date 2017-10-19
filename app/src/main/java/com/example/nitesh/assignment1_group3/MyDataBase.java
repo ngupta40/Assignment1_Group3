@@ -18,8 +18,8 @@ import android.os.Environment;
 public class MyDataBase extends SQLiteOpenHelper
 {
     private static String path = Environment.getExternalStorageDirectory().getPath();
-    private static String DATABASE_FILENAME = "/group3";
-    private static final String DATABASE_NAME = path+ "/Android/Data/CSE535_ASSIGNMENT2" + DATABASE_FILENAME;
+    private static String DATABASE_FILENAME = "assignment2_group3";
+    private static final String DATABASE_NAME = path+ "/Android/Data/CSE535_ASSIGNMENT2/" + DATABASE_FILENAME;
     private static final int DATABASE_VERSION = 1;
     private Context context;
 
