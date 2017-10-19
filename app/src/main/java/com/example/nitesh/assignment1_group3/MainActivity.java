@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         float[] values = new float[10];
         runButton = (Button) findViewById(R.id.btnRun);
         stopButton = (Button) findViewById(R.id.btnStop);
+        stopButton.setEnabled(false);
         uploadButton = (Button) findViewById(R.id.Upload);
         downloadButton = (Button) findViewById(R.id.Download);
         id = (EditText) findViewById(R.id.txtPatID);
@@ -136,8 +137,12 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "ENTER ALL DETAILS", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    if (buttonAlreadyClicked == false) {
+                    if (buttonAlreadyClicked == false)
+                    {
+                        Toast.makeText(MainActivity.this,"Service Started",Toast.LENGTH_SHORT).show();
                         buttonAlreadyClicked = true;
+                        stopButton.setEnabled(true);
+                        runButton.setEnabled(false);
                         serviceFlag = true;
                         handler = new MyDataBase(MainActivity.this);
                         handler.createDatabase();
@@ -184,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
+                runButton.setEnabled(true);
+                stopButton.setEnabled(false);
                 clearGraph();
                 if(serviceFlag)
                 {
