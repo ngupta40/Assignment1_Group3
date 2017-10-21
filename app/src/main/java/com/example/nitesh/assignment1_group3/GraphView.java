@@ -61,14 +61,9 @@ public class GraphView extends View {
 	}
 
 	public void setValues(float[] XnewValues, float[] YnewValues, float[] ZnewValues) {
-//       this.values = newValues;
-//      System.arraycopy(newValuesX, 0, this.valuesX, 9, 1);
-//      System.arraycopy(newValuesY, 0, this.valuesY, 9, 1);
-//      System.arraycopy(newValuesZ, 0, this.valuesZ, 9, 1);
 		this.Xvalues = XnewValues;
 		this.Yvalues = YnewValues;
 		this.Zvalues = ZnewValues;
-		System.out.println(this.Xvalues);
 	}
 
 	@Override
@@ -77,9 +72,7 @@ public class GraphView extends View {
 		float hstart = border * 2;
 		float height = getHeight();
 		float width = getWidth() - 1;
-//        float max = getMax();
-//        float min = getMin();
-//        float diff = max - min;
+
 		float graphheight = height - (2 * border);
 		float graphwidth = width - (2 * border);
 
